@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition</title>
+    <style>
+        /* Body background and overall page styling */
+        body {
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Centered container for the content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        /* Heading styles */
+        h1, h2 {
+            font-family: 'Arial Black', sans-serif;
+            color: #1B4769;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 0.5em;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #75A4C5;
+            margin-bottom: 2em;
+        }
+
+        /* Button styling for a modern look */
+        button {
+            background-color: #1B4769;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #75A4C5;
+            transform: scale(1.1);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Popup styling */
+        #webFeedPopup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 20px;
+            z-index: 1000;
+        }
+    </style>
+    <script>
+        function startRecognition() {
+            fetch('/start_recognition', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.new_face_detected) {
+                        let name = prompt("New face detected! Please enter your name:");
+                        if (name) {
+                            submitName(data.id, name);
+                        }
+                    } else if (data.recognized) {
+                        showWebFeed("Recognized: " + data.name); // Show the popup with the recognized name
+                    } else {
+                        alert("No face detected.");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function submitName(id, name) {
+            fetch('/submit_name', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ id: id, name: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Name submitted successfully!");
+                } else {
+                    alert("Error submitting name.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function showWebFeed(message) {
+            const popup = document.getElementById('webFeedPopup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+
+            // Hide the popup after 5 seconds
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>CogniCare: Facial Recognition</h1>
+        <h2>Efficient Face Recognition Technology for Assisted Care</h2>
+        
+        <div id="webFeedPopup"></div> <!-- Popup div for displaying the recognized name -->
+        
+        <p style="font-size: 1.2em; color: #5f6368; max-width: 600px; margin-bottom: 2em;">
+            Try out our facial recognition software! Scan your face and store your identity for future recognition.
+        </p>
+
+        <button onclick="startRecognition()">Start Recognition</button>
+    </div>
+</body>
+</html>

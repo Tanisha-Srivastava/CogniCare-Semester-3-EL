@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map with Navigation</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Your Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <!-- Control Panel -->
+    <div id="controls">
+        <h3>Map Controls</h3>
+        <div>
+            <label>Add New Place:</label><br>
+            Name: <input type="text" id="placeName" />
+            <br>
+            Latitude:
+            <input type="number" id="latitudeDegrees" placeholder="Degrees" />
+            <input type="number" id="latitudeMinutes" placeholder="Minutes" />
+            <input type="number" id="latitudeSeconds" placeholder="Seconds" />
+            <br>
+            Longitude:
+            <input type="number" id="longitudeDegrees" placeholder="Degrees" />
+            <input type="number" id="longitudeMinutes" placeholder="Minutes" />
+            <input type="number" id="longitudeSeconds" placeholder="Seconds" />
+            <br>
+            <button onclick="addPlace()">Add</button>
+        </div>
+        <hr>
+        <div>
+            <label>Navigate:</label><br>
+            From: <select id="source"></select>
+            To: <select id="destination"></select>
+            <button onclick="navigate()">Navigate</button>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize map
+        const map = L.map('map').setView([12.94, 77.52], 14); // Centered in Bangalore
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Data storage for places
+        const places = [
+            { name: "Nayandahalli Metro Station", lat: 12.94175, lon: 77.52533 },
+            { name: "Gopalan Arcade Mall", lat: 12.93613, lon: 77.51767 }
+        ];
+
+        // Add markers and populate dropdowns
+        function loadPlaces() {
+            places.forEach(place => {
+                L.marker([place.lat, place.lon])
+                 .addTo(map)
+                 .bindPopup(`<b>${place.name}</b>`);
+
+                // Add to source and destination dropdowns
+                const option = new Option(place.name, JSON.stringify(place));
+                document.getElementById('source').add(option.cloneNode(true));
+                document.getElementById('destination').add(option);
+            });
+        }
+
+        // Add new place
+        function addPlace() {
+            const name = document.getElementById('placeName').value;
+            const latDegrees = parseInt(document.getElementById('latitudeDegrees').value);
+            const latMinutes = parseFloat(document.getElementById('latitudeMinutes').value);
+            const latSeconds = parseFloat(document.getElementById('latitudeSeconds').value);
+            const lonDegrees = parseInt(document.getElementById('longitudeDegrees').value);
+            const lonMinutes = parseFloat(document.getElementById('longitudeMinutes').value);
+            const lonSeconds = parseFloat(document.getElementById('longitudeSeconds').value);
+
+            if (
+                name &&
+                !isNaN(latDegrees) &&
+                !isNaN(latMinutes) &&
+                !isNaN(latSeconds) &&
+                !isNaN(lonDegrees) &&
+                !isNaN(lonMinutes) &&
+                !isNaN(lonSeconds)
+            ) {
+                // Convert DMS (Degrees, Minutes, Seconds) to Decimal Degrees
+                const lat = latDegrees + latMinutes / 60 + latSeconds / 3600;
+                const lon = lonDegrees + lonMinutes / 60 + lonSeconds / 3600;
+
+                const newPlace = { name, lat, lon };
+                places.push(newPlace);
+
+                // Add marker
+                L.marker([lat, lon])
+                 .addTo(map)
+                 .bindPopup(`<b>${name}</b>`);
+
+                // Update dropdowns
+                const option = new Option(name, JSON.stringify(newPlace));
+                document.getElementById('source').add(option.cloneNode(true));
+                document.getElementById('destination').add(option);
+
+                alert("Place added successfully!");
+            } else {
+                alert("Please enter valid details for all fields.");
+            }
+        }
+
+        // Navigation logic
+        function navigate() {
+            const sourceData = document.getElementById('source').value;
+            const destData = document.getElementById('destination').value;
+
+            if (sourceData && destData) {
+                const source = JSON.parse(sourceData);
+                const dest = JSON.parse(destData);
+
+                fetch(`https://router.project-osrm.org/route/v1/driving/${source.lon},${source.lat};${dest.lon},${dest.lat}?overview=full&geometries=geojson`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.routes && data.routes.length > 0) {
+                            const route = data.routes[0].geometry;
+
+                            // Remove previous route if exists
+                            if (window.routeLayer) map.removeLayer(window.routeLayer);
+
+                            // Add new route to map
+                            window.routeLayer = L.geoJSON(route, {
+                                style: { color: 'blue', weight: 5 }
+                            }).addTo(map);
+
+                            map.fitBounds(L.geoJSON(route).getBounds());
+                        } else {
+                            alert("No route found. Please check your input.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error with navigation:", error);
+                        alert("Navigation failed.");
+                    });
+            } else {
+                alert("Please select both source and destination.");
+            }
+        }
+
+        // Initial loading
+        loadPlaces();
+    </script>
+</body>
+</html>
