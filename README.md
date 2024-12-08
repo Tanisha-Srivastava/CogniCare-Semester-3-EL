@@ -10,9 +10,9 @@ Voice and visual prompts for medication and task reminders.
 GPS and route mapping for navigation assistance.
 
 Tech stack includes-
-React js and HTML for frontend 
-Flask: Python frameworks for scalable and efficient backend services.
-SQLite: Lightweight and serverless database 
+-React js and HTML for frontend 
+-Flask: Python frameworks for scalable and efficient backend services.
+-SQLite: Lightweight and serverless database 
 
 Libraries used include-
 TensorFlow.js: Browser-based ML library for facial recognition and prediction models.
