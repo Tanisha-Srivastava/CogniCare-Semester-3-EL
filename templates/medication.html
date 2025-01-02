@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medication Reminder</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #87CEEB;
+      /* Sky blue background */
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      color: #5A5A5A;
+    }
+
+    form {
+      max-width: 100%;
+      /* Utilize full width of the container */
+      width: 50%;
+      /* Set a wide form size relative to the viewport */
+      margin: 20px auto;
+      /* Center the form */
+      padding: 40px;
+      /* Provide generous inner spacing */
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+
+
+    form label {
+      display: block;
+      margin: 8px 0 4px;
+      font-size: 14px;
+    }
+
+    form input[type="text"],
+    form input[type="datetime-local"],
+    form button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    form button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    form button:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f4f4f4;
+      font-size: 16px;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .task input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    .completed {
+      background-color: #d4edda;
+      /* Light green */
+      font-weight: bold;
+    }
+
+    .missed {
+      background-color: #f8d7da;
+      /* Light red */
+      font-weight: bold;
+    }
+
+    .pending {
+      background-color: #fff;
+    }
+
+    .status-checkbox {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .logout-button {
+      margin-top: auto;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .logout-button a {
+      display: inline-block;
+      text-decoration: none;
+      background-color: #FF4500;
+      /* Orange-red */
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .logout-button a:hover {
+      background-color: #d73800;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Medication Reminder</h1>
+
+  <!-- Form to Add New Medication -->
+  <form id="addReminderForm">
+    <label for="medication_name">Medication Name:</label>
+    <input type="text" id="medication_name" required>
+    <label for="time">Time:</label>
+    <input type="datetime-local" id="time" required>
+    <label for="dosage">Dosage:</label>
+    <input type="text" id="dosage" required>
+    <label for="notes">Notes:</label>
+    <input type="text" id="notes">
+    <button type="submit">Add Reminder</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Medication Name</th>
+        <th>Time</th>
+        <th>Dosage</th>
+        <th>Notes</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="remindersTable">
+      <!-- Dynamic Rows -->
+    </tbody>
+  </table>
+
+  <!-- Logout Button -->
+  <div class="logout-button">
+    <a href="/patient_page">Back</a>
+  </div>
+
+  <script>
+    const reminders = [];
+
+    function loadReminders() {
+      const table = document.getElementById('remindersTable');
+      table.innerHTML = ''; // Clear table before reloading
+      reminders.forEach((reminder, index) => {
+        const row = document.createElement('tr');
+        const status = new Date(reminder.time) < new Date() ? 'missed' : 'pending';
+        row.innerHTML = `
+          <td>${reminder.medication_name}</td>
+          <td>${reminder.time}</td>
+          <td>${reminder.dosage}</td>
+          <td>${reminder.notes || ''}</td>
+          <td class="${status}">
+            <input type="checkbox" class="status-checkbox" onclick="markCompleted(this, ${index})">
+          </td>
+        `;
+        table.appendChild(row);
+        updateRowStatus(row, reminder, status);
+      });
+    }
+
+    function markCompleted(checkbox, index) {
+      const row = checkbox.closest('tr');
+      if (checkbox.checked) {
+        row.className = 'completed';
+        reminders[index].status = 'completed';
+      } else {
+        updateRowStatus(row, reminders[index], new Date(reminders[index].time) < new Date() ? 'missed' : 'pending');
+        reminders[index].status = new Date(reminders[index].time) < new Date() ? 'missed' : 'pending';
+      }
+    }
+
+    function updateRowStatus(row, reminder, status) {
+      if (status === 'completed') {
+        row.className = 'completed';
+      } else if (status === 'missed') {
+        row.className = 'missed';
+      } else {
+        row.className = 'pending';
+      }
+    }
+
+    document.getElementById('addReminderForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const medication_name = document.getElementById('medication_name').value;
+      const time = document.getElementById('time').value;
+      const dosage = document.getElementById('dosage').value;
+      const notes = document.getElementById('notes').value;
+
+      reminders.push({ medication_name, time, dosage, notes });
+      loadReminders();
+      event.target.reset();
+    });
+
+    loadReminders();
+  </script>
+</body>
+
+</html>

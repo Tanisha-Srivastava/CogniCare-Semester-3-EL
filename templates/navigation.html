@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='navstyles.css') }}">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h2>CogniCare: Navigation</h2>
+            <form method="POST" action="/navigation">
+                <input type="text" id="placeName" name="place_name" placeholder="Enter place name" required>
+                <!-- Hidden latitude and longitude inputs -->
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+                <button type="button" id="savePlaceBtn">Save Place</button>
+            </form>
+            
+            <h3>Routing</h3>
+            <label for="source">Source</label>
+            <select id="source" name="source">
+                <option value="">Select Source</option>
+                <!-- Options will be populated dynamically -->
+            </select>
+
+            <label for="destination">Destination</label>
+            <select id="destination" name="destination">
+                <option value="">Select Destination</option>
+                <!-- Options will be populated dynamically -->
+            </select>
+
+            <button id="findRouteBtn" onclick="calculateRoute()">Find Route</button>
+
+            <button onclick="window.location.href='/patient_page'" class="back-btn">Back</button>
+        </div>
+
+        <div id="map" style="height: 100%; width: 100%;"></div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+    <script src="{{ url_for('static', filename='navigation.js') }}"></script>
+</body>
+</html>

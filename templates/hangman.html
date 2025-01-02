@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body {
+            background-image: url('{{ url_for("static", filename="bg8.png") }}');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .word-display {
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .message, .attempts, .hint {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .input-box {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="text"] {
+            height: 40px;
+            font-size: 16px;
+            padding: 5px;
+            border: 1px solid #a9a9a9;
+            border-radius: 8px;
+        }
+        button {
+            background-color: rgba(156, 41, 41, 0.4);
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: rgba(165, 53, 53, 0.75);
+            transform: scale(1.05);
+        }
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .container {
+            background-color: rgba(240, 240, 240, 0.8);
+            max-width: 400px;
+            width: 100%;
+            padding: 25px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+    <script>
+        async function makeGuess(event) {
+            event.preventDefault();
+            const letterInput = document.getElementById("letter");
+            const letter = letterInput.value.trim().toUpperCase();
+            if (!letter) return;
+            letterInput.value = "";
+
+            const response = await fetch("/hangman_guess", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ letter }),
+            });
+
+            const data = await response.json();
+            document.getElementById("word-display").innerText = data.word_display;
+            document.getElementById("message").innerText = data.message;
+            document.getElementById("attempts").innerText = `Attempts remaining: ${data.attempts}`;
+            document.getElementById("hint").innerText = `Hint: ${data.hint}`;
+
+            if (data.status === "win" || data.status === "lose") {
+                document.getElementById("letter").disabled = true;
+                document.getElementById("guess-btn").disabled = true;
+                document.getElementById("play-again-btn").style.display = "block";
+            }
+        }
+
+        async function resetGame() {
+            const response = await fetch("/hangman_reset", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const data = await response.json();
+            if (data.message === "Game reset!") {
+                document.getElementById("word-display").innerText = data.word_display;
+                document.getElementById("message").innerText = "";
+                document.getElementById("attempts").innerText = `Attempts remaining: ${data.attempts}`;
+                document.getElementById("hint").innerText = `Hint: ${data.hint}`;
+                document.getElementById("letter").disabled = false;
+                document.getElementById("guess-btn").disabled = false;
+                document.getElementById("play-again-btn").style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Hangman Game</h1>
+        <p id="hint" class="hint">Hint: {{hint}}</p>
+        <div id="word-display" class="word-display">_ _ _ _ _</div>
+        <div id="message" class="message"></div>
+        <div id="attempts" class="attempts">Attempts remaining: 6</div>
+        <form class="input-box" onsubmit="makeGuess(event)">
+            <input type="text" id="letter" maxlength="1" placeholder="Enter a letter" aria-label="Enter a letter">
+            <button type="submit" id="guess-btn">Guess</button>
+        </form>
+        <button id="play-again-btn" style="display: none;" onclick="resetGame()">Play Again?</button>
+        <button onclick="window.location.href='/patient_page'" class="back-btn">Back</button>
+    </div>
+</body>
+</html>

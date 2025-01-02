@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        body {
+            background-color: rgba(0, 32, 64, 1);
+            overflow-x: hidden;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .container1 input,
+        .container1 select,
+        .container1 button {
+            background-color: transparent;
+            padding: 10px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .container1 input:hover,
+        .container1 select:hover,
+        .container1 button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        .container1 {
+            background: rgba(255, 255, 255, 0.2);
+            width: 100%;
+            text-align: center;
+            margin: 0;
+            padding: 10px 0;
+            border: 1px solid #ccc;
+        }
+        .container2 {
+            background: rgba(255, 255, 255, 0);
+            width: 80%;
+            margin: auto;
+            text-align: center;
+            margin-top: 10%;
+            border: 1px solid white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        a {
+            text-decoration: none;
+            color: white;
+        }
+        h1, h2 {
+            text-align: center;
+            color: white;
+        }
+        h1 {
+            margin-top: 20%;
+        }
+        table td {
+            border-radius: 3px;
+        }
+        .spacer {
+            width: 730px;
+        }
+        .about-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 50px auto;
+            width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .about-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .about-section p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 150px;
+        }
+        .feature-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .feature-item p {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            margin: 0;
+        }
+        button, a {
+            transition: all 0.3s ease;
+        }
+        button:hover, a:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container1">
+        <table cellspacing="7">
+            <tr>
+                <td>
+                    <img src="/static/RVwhite.png" width="35px">
+                </td>
+                <td>
+                    <font size="2.5" face="Calibri" color="white">NexusMinds</font>
+                </td>
+                <td class="spacer"></td>
+                <td align="center">
+                    <button onclick="showRoleSelection()">
+                        <font size="2.5" face="Arial" color="white">Login</font>
+                    </button>
+                </td>
+                <td>
+                    <button onclick="scrollToAbout()">
+                        <font size="2.5" face="Arial" color="white">About Us</font>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="container2">
+        <table>
+            <tr>
+                <td>
+                    <img src="/static/coverpic.png" width="282.5" height="277">
+                </td>
+                <td align="left">
+                    <font size="6" face="Arial Black" color="white">|</font>
+                    <font size="5" face="Arial" color="white">NexusMinds</font>
+                    <br>
+                    <font size="16" face="Arial Black" color="white">CogniCare:</font>
+                    <br>
+                    <font size="6" face="Arial Black" color="white">AI for Assisted Dementia Care</font>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- About section -->
+    <div id="about" class="about-section">
+        <h2>About CogniCare</h2>
+        <p>
+            CogniCare, powered by NexusMinds, is an intelligent AI platform designed to revolutionize dementia care.
+            By blending innovative technology with compassionate solutions, CogniCare assists patients, caregivers, and families
+            in navigating the challenges of dementia. Our goal is to enhance lives through real-time tracking, personalized care, and seamless support.
+        </p>
+        <div class="features">
+            <div class="feature-item">
+                <img src="/static/facial-recognition.png" alt="Facial Recognition Icon">
+                <p>Facial Recognition</p>
+            </div>
+            <div class="feature-item">
+                <img src="/static/navigation.png" alt="Navigation Icon">
+                <p>Navigation</p>
+            </div>
+            <div class="feature-item">
+                <img src="/static/task-list.png" alt="Task List Icon">
+                <p>Task List</p>
+            </div>
+            <div class="feature-item">
+                <img src="/static/medication-tracker.png" alt="Medication Tracker Icon">
+                <p>Medication Tracker</p>
+            </div>
+            <div class="feature-item">
+                <img src="/static/games.png" alt="Games Icon">
+                <p>Games</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role selection modal -->
+    <div id="roleSelectionModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; text-align:center; padding-top:10%;">
+        <div style="background:white; padding:30px; border-radius:15px; display:inline-block; text-align:center; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);">
+            <h2 style="font-family: 'Arial Black', sans-serif; color: #002040; margin-bottom:20px;">Select Your Role</h2>
+            <div style="margin: 20px 0;">
+                <a href="/patient_signup" style="text-decoration:none; padding:15px 30px; font-size:18px; color:white; background-color:#4CAF50; border-radius:25px; font-family:'Arial', sans-serif; margin: 10px; display:inline-block; transition:all 0.3s ease;">
+                    Patient
+                </a>
+                <a href="/caregiver_signup" style="text-decoration:none; padding:15px 30px; font-size:18px; color:white; background-color:#2196F3; border-radius:25px; font-family:'Arial', sans-serif; margin: 10px; display:inline-block; transition:all 0.3s ease;">
+                    Caregiver
+                </a>
+            </div>
+            <button onclick="closeRoleSelection()" style="padding:10px 20px; font-size:16px; cursor:pointer; color: #333; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 10px; transition: all 0.3s ease;">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showRoleSelection() {
+            document.getElementById('roleSelectionModal').style.display = 'block';
+        }
+
+        function closeRoleSelection() {
+            document.getElementById('roleSelectionModal').style.display = 'none';
+        }
+
+        function scrollToAbout() {
+            document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='bg8.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+        .page-container {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.40); /* Increased translucency */
+            backdrop-filter: blur(10px); /* Blurs the background for better contrast */
+            max-width: 600px;
+            margin: 50px auto;
+            border-radius: 20px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+        }
+        .top-image {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+        }
+        .top-image:hover {
+            transform: scale(1.1);
+        }
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #2C3E50;
+            font-weight: 600;
+        }
+        p {
+            margin: 8px 0 25px;
+            color: #7F8C8D;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            padding: 12px 25px;
+            background-color: #FF5C8D;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .logout-btn:hover {
+            background-color: #FF2C56;
+            transform: scale(1.05);
+        }
+        button {
+            margin: 12px;
+            padding: 12px 28px;
+            background-color: #3498DB;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980B9;
+            transform: scale(1.05);
+        }
+
+        .task-list {
+            margin-top: 40px;
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #ecf0f1;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .task-item:hover {
+            background-color: #d6eaf8;
+        }
+        .task-item input[type="checkbox"] {
+            margin-right: 15px;
+        }
+        .task-item.completed {
+            background-color: #d4edda;
+            text-decoration: line-through;
+        }
+        .task-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .task-form input {
+            padding: 12px;
+            font-size: 1.1rem;
+            width: calc(100% - 160px);
+            max-width: 450px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        .task-form button {
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .task-form button:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="page-container">
+        <table>
+            <tr>
+                <img src="{{ url_for('static', filename='dementia1.png') }}" alt="Dementia Support" class="top-image">
+            </tr>
+            <tr>
+                <h2>Welcome, {{ name }}</h2>
+                <p>Your Patient ID: {{ patient_id }}</p>
+            </tr>
+            <tr>
+                <button onclick="startRecognition()">Start Recognition</button>
+                <div id="result"></div>
+            </tr>
+            <tr>
+                <button onclick="window.location.href='/navigation'" >Go to Navigation</button>
+            </tr>
+            <tr>
+                <button onclick="window.location.href='/medication'" >Medication Reminders</button>
+            </tr>
+            <tr>
+                <!-- Task List Section -->
+                <h3>Task List</h3>
+                <div class="task-form">
+                    <input type="text" id="taskInput" placeholder="Enter new task">
+                    <button onclick="addTask()">Add Task</button>
+                </div>
+            </tr>
+            <tr>
+                <ul id="taskList" class="task-list">
+                    <!-- Task items will be dynamically added here -->
+                </ul>
+            </tr>
+            
+            <tr>
+                <button onclick="window.location.href='/hangman'">Play Hangman Game</button>
+            </tr>
+        </table>
+        <button class="logout-btn" onclick="window.location.href='/'">Logout</button>
+    </div>
+
+    <script>
+        // Task management logic
+        function addTask() {
+            const taskInput = document.getElementById('taskInput');
+            const taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                const taskList = document.getElementById('taskList');
+                const taskItem = document.createElement('li');
+                taskItem.classList.add('task-item');
+                taskItem.innerHTML = `
+                    <input type="checkbox" onclick="toggleTask(this)">
+                    <span>${taskText}</span>
+                    <button onclick="removeTask(this)">Delete</button>
+                `;
+                taskList.appendChild(taskItem);
+                taskInput.value = ""; // Clear input after adding task
+            }
+        }
+
+        function toggleTask(checkbox) {
+            const taskItem = checkbox.parentElement;
+            taskItem.classList.toggle('completed');
+            if (checkbox.checked) {
+                setTimeout(() => {
+                    taskItem.remove(); // Remove task after completion
+                }, 500);
+            }
+        }
+
+        function removeTask(button) {
+            const taskItem = button.parentElement;
+            taskItem.remove(); // Remove the task from the list
+        }
+
+        function startRecognition() {
+            const patientId = "{{ patient_id }}"; // Ensure patient_id is correctly passed as a string
+            fetch('/start_recognition', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ patient_id: patientId }) // Send the patient ID as part of the POST request
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.recognized) {
+                    resultDiv.textContent = `Recognized: ${data.name}`;
+                } else if (data.new_face_detected) {
+                    resultDiv.innerHTML = `
+                        New face detected. Enter your name:
+                        <form method="POST" action="/submit_name">
+                            <input type="hidden" name="patient_id" value="${patientId}">
+                            <input type="text" name="name" required>
+                            <button type="submit">Submit</button>
+                        </form>
+                    `;
+                } else {
+                    resultDiv.textContent = 'No face detected.';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
