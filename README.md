@@ -1,5 +1,6 @@
 # CogniCare-Semester-3-EL
 
+## 🚀Introduction
 Dementia patients worldwide face difficulties in recognizing faces, navigating familiar places, managing daily tasks, and ensuring personal safety, leading to lost independence and emotional strain on patients and caregivers.
 Traditional care methods often fail to address these challenges, increasing stress, anxiety and social isolation.
 To ease this burden, CogniCare is designed to support both patients and caregivers, making everyday life simpler and more manageable.
